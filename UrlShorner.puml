@@ -1,0 +1,29 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+':Main Admin: as Admin
+'(Use the application) as (Use)
+
+client -> [Proxy_Server]
+[Proxy_Server] --> [Gateway]
+[Gateway] --> [POST /urls - Generate Short URL]
+[Gateway] --> [GET /{shor-url} - Redirect to Original URL]
+[POST /urls - Generate Short URL] --> (Read/Write Database)
+[GET /{shor-url} - Redirect to Original URL] --> (Read/Write Database)
+[GET /{shor-url} - Redirect to Original URL] <-- (Radish cache)
+
+note right of [POST /urls - Generate Short URL] : create short url.
+note left of (Read/Write Database) : store the mapping between short url, original url, createDatetime and userId. User: userId and user details
+
+
+'note right of Admin : This is an example.
+
+'note right of [Gateway]
+'A note can also
+'be on several lines
+'end note
+
+'note "This note is connected\nto several objects." as N2
+'[Gateway] .. N2
+'N2 .. [Redirect to Original URL]
+@enduml
