@@ -1,7 +1,6 @@
 package com.design.circutebreaker.service;
 
 import com.design.circutebreaker.model.Payment;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,15 +11,14 @@ import java.math.BigDecimal;
 public class PayInitService {
 
 
-    @CircuitBreaker(name = "backendA", fallbackMethod = "paymentFallback")
     public ResponseEntity<String> handlePayment(Payment payment) {
 
-        if(BigDecimal.TEN.equals(payment.getAmount())){
+        if (BigDecimal.TEN.equals(payment.getAmount())) {
             // THROW an exception so Resilience4j counts it as a failure
             throw new RuntimeException("Service Unavailable simulation");
         }
 
-        if(BigDecimal.ONE.equals(payment.getAmount())){
+        if (BigDecimal.ONE.equals(payment.getAmount())) {
             throw new RuntimeException("Gateway Timeout simulation");
         }
 

@@ -1,0 +1,22 @@
+info:
+  name: payInit
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8080/payInit
+  body:
+    type: json
+    data: |-
+      {
+        "firmRootId": "id1",
+        "amount": 10
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
