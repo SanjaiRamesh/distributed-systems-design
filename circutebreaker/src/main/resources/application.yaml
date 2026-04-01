@@ -1,48 +1,51 @@
 spring:
   application:
     name: spring-gateway
-  redis:
-    host: localhost
-    port: 6379
+  data:
+    redis:
+      host: localhost
+      port: 6379
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-      routes:
-        - id: payment-init-route
-          uri: lb://circuitbreaker-service
-          predicates:
-            - Path=/api/payInit/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                # The bean name of the KeyResolver (ipKeyResolver defined above)
-                key-resolver: '#{@ipKeyResolver}'
-                # How many requests per second a user is allowed to send without any dropped requests
-                redis-rate-limiter.replenishRate: 10
-                # Maximum number of requests a user is allowed to do in a single second (accommodates bursts)
-                redis-rate-limiter.burstCapacity: 20
-                # How many tokens a request costs (defaults to 1)
-                redis-rate-limiter.requestedTokens: 1
-                # Status code to return when rate limit is exceeded (defaults to 429 TOO MANY REQUESTS)
-                redis-rate-limiter.empty-key-status-code: 429
-
-
-
-
+      server:
+        webmvc: # Use the full path to avoid deprecation warnings
+          routes:
+            - id: payment-init-route
+              uri: http://localhost:8080
+              predicates:
+                - Path=/api/payInit
+              filters:
+                - RewritePath=/api/payInit, /payInit
+                - name: CircuitBreaker
+                  args:
+                    id: exampleCB
+                    statusCodes: 500, 503
+resilience4j.circuitbreaker:
+  instances:
+      exampleCB:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 20s
+        permittedNumberOfCallsInHalfOpenState: 3
+        minimumNumberOfCalls: 5
+        sliding-window-type: COUNT_BASED
+        baseConfig: default
+  configs:
+    default:
+      register-health-indicator: true
 management:
   endpoints:
-    metrics:
-      enabled: true
     web:
       exposure:
-        include: health, bean, info
+        include: "health,beans,info" # Plural 'beans'
   endpoint:
     health:
       show-details: always
+    gateway:
+      enabled: true
   health:
+    circuitbreakers:
+      enabled: true
     redis:
       enabled: true
-
-
