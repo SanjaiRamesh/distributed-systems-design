@@ -1,0 +1,39 @@
+info:
+  name: payInit copy
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: http://localhost:8080/payments
+  body:
+    type: json
+    data: |-
+      {
+        "idempotencyKey": "cli-20240115-abc124",
+        "amount": "100.00",
+        "currency": "EUR",
+        "paymentMethod": "BANK_TRANSFER",
+        "source": {
+          "accountId": "acc-001",
+          "accountName": "Acme Corp",
+          "bankCode": "DEUTDEDB"
+        },
+        "beneficiary": {
+          "accountId": "acc-002",
+          "accountName": "John Doe",
+          "iban": "DE89370400440532013000",
+          "bankCode": "COBADEFFXXX"
+        },
+        "description": "Invoice payment INV-2024-001",
+        "metadata": {
+          "clientRef": "PO-98765"
+        }
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
