@@ -1,0 +1,23 @@
+info:
+  name: InitiateProductEvent
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: http://localhost:8181/api/products
+  body:
+    type: json
+    data: |-
+      {
+        "title":"Apple 18s",
+        "name":"Apple",
+        "price": 264.5
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
